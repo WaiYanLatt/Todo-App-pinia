@@ -11,6 +11,7 @@ export default {
   data() {
     return {
       todoStore: todoStore(),
+      editing: false,
     };
   },
   mounted() {
@@ -30,6 +31,10 @@ export default {
       }
     },
     editTodo() {
+      this.editing = true;
+    },
+    doneEditTodo() {
+      this.editing = false;
       this.todoStore.updateTodo(this.todo);
     },
   },
@@ -38,23 +43,37 @@ export default {
 
 <template>
   <div class="flex items-center justify-between">
-    <div class="flex lg:mx-5 items-center">
+    <div class="flex items-center lg:mx-5">
       <input
         type="checkbox"
         v-model="todo.completed"
         class="mr-3 cursor-pointer bg-sky-500"
       />
       <h1
-        class="font-semibold text-xl break-all lg:w-full w-32"
+        v-show="editing === false"
+        class="w-32 text-xl font-semibold break-all lg:w-full"
         :class="{ 'line-through decoration-sky-500': todo.completed === true }"
       >
         {{ todo.title }}
       </h1>
+      <form
+        v-show="editing === true"
+        class="w-full"
+        @submit.prevent="doneEditTodo"
+      >
+        <input
+          type="text"
+          v-model="todo.title"
+          id="todo-title"
+          class="lg:w-full w-[70%] px-5 py-1 text-lg font-semibold border border-black rounded-lg focus:outline-none"
+          placeholder="Edit Your Todo"
+        />
+      </form>
     </div>
-    <div class="lg:mt-0 flex items-center">
+    <div class="flex items-center lg:mt-0">
       <button
-        class="bg-sky-500 text-white font-semibold p-2 mr-3 rounded-lg"
-        @click="editTodo"
+        class="p-2 mr-3 font-semibold text-white rounded-lg bg-sky-500"
+        @click.prevent="editTodo"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -72,8 +91,8 @@ export default {
         </svg>
       </button>
       <button
-        class="bg-red-500 text-white font-semibold p-2 rounded-lg"
-        @click="deleteTodo"
+        class="p-2 font-semibold text-white bg-red-500 rounded-lg"
+        @click.prevent="deleteTodo"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
